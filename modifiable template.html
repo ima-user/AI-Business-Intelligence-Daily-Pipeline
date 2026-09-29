@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>战略简报模板 - 3页A4专业排版</title>
+    <style>
+        /* ===================================================
+           1. 打印与基础版面重置（确保导出标准 A4 规格）
+           =================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9;
+        }
+        body {
+            padding: 24px 0;
+            margin: 0 auto;
+            max-width: 900px !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* 页面容器（锁定标准 A4 尺寸高度 297mm） */
+        .page {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto 16px auto;
+            padding: 18mm 18mm 12mm 18mm;
+            background-color: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-content {
+            flex: 1 1 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .page-footer {
+            flex-shrink: 0;
+            margin-top: auto;
+            padding-top: 4mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 8.5pt;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* ===================================================
+           2. 咨询公司专业主题色系（可根据品牌自选替换）
+           =================================================== */
+        :root {
+            --brand-accent: #86BC25;      /* 焦点主色（德勤绿 / 战略绿） */
+            --brand-accent-dark: #5c8418; /* 深色辅助 */
+            --brand-primary: #0f172a;     /* 主标题与报头深色（近黑板岩灰） */
+            --brand-secondary: #475569;   /* 副标题与小标签灰 */
+            --brand-border: #e2e8f0;      /* 分割线浅灰 */
+            --brand-bg-soft: #f8fafc;     /* 浅色区块背景 */
+            --brand-highlight-bg: #f4f8ee;/* 结论高亮绿底色 */
+        }
+
+        /* 顶部悬浮工具栏（打印时自动隐藏） */
+        .floating-toolbar {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-action {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 9px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-action:hover {
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+        .btn-action.btn-green {
+            background-color: var(--brand-accent);
+            color: #000000;
+        }
+
+        /* 报头设计 */
+        .masthead {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            padding: 20px 22px;
+            border-bottom: 5px solid var(--brand-accent);
+            margin-bottom: 16px;
+            margin-top: -2mm;
+        }
+        .masthead-overline {
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: var(--brand-accent);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .masthead h1 {
+            font-size: 20pt;
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: -0.2px;
+        }
+        .masthead .meta {
+            font-size: 9pt;
+            color: #94a3b8;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* 执行摘要框 */
+        .exec-summary {
+            background-color: var(--brand-bg-soft);
+            border-left: 4px solid var(--brand-accent);
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 10pt;
+            line-height: 1.55;
+            color: #334155;
+        }
+        .exec-summary strong {
+            color: var(--brand-primary);
+            font-weight: 700;
+        }
+
+        /* 小节标题条 */
+        .section-title {
+            font-size: 12pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--brand-primary);
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid var(--brand-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background-color: var(--brand-accent);
+        }
+
+        /* 矩阵速览：两列网格 */
+        .quick-glance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 18px;
+            margin-bottom: 16px;
+        }
+        .glance-item {
+            font-size: 9pt;
+            line-height: 1.45;
+            color: #334155;
+            background: #ffffff;
+            border-left: 2px solid var(--brand-border);
+            padding-left: 8px;
+        }
+        .glance-item .bullet-num {
+            color: var(--brand-accent-dark);
+            font-weight: 700;
+            margin-right: 2px;
+        }
+        .glance-item strong {
+            color: var(--brand-primary);
+        }
+
+        /* 关键指标核心看板 */
+        .metric-banner {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            border-radius: 2px;
+        }
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .metric-label {
+            font-size: 10pt;
+            font-weight: 600;
+            color: #cbd5e1;
+            letter-spacing: 0.5px;
+        }
+        .metric-tag {
+            font-size: 8pt;
+            background-color: var(--brand-accent);
+            color: var(--brand-primary);
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+        .metric-value-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin: 4px 0 8px 0;
+        }
+        .metric-value {
+            font-size: 28pt;
+            font-weight: 800;
+            color: var(--brand-accent);
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+        .metric-unit {
+            font-size: 10.5pt;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .metric-desc {
+            font-size: 9pt;
+            color: #94a3b8;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        /* 深度分析卡片 */
+        .analysis-card {
+            margin-bottom: 18px;
+            border: 1px solid var(--brand-border);
+            background: #ffffff;
+        }
+        .analysis-title {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            padding: 8px 14px;
+            font-size: 11pt;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .analysis-title .badge {
+            font-size: 8pt;
+            color: var(--brand-accent);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .analysis-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .analysis-row {
+            display: flex;
+            border-bottom: 1px solid var(--brand-border);
+        }
+        .analysis-col {
+            flex: 1;
+            padding: 12px 14px;
+            font-size: 9.5pt;
+            line-height: 1.45;
+        }
+        .analysis-col:first-child {
+            border-right: 1px solid var(--brand-border);
+        }
+        .col-label {
+            font-size: 8.5pt;
+            color: var(--brand-secondary);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+        .impact-box {
+            background-color: var(--brand-highlight-bg);
+            padding: 12px 14px;
+            border-left: 4px solid var(--brand-accent);
+        }
+        .impact-box .col-label {
+            color: var(--brand-accent-dark);
+        }
+        .impact-box p {
+            margin: 0;
+            font-size: 9.5pt;
+            line-height: 1.5;
+            color: #1e293b;
+        }
+
+        /* 行动建议矩阵 */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .action-card {
+            border: 1px solid var(--brand-border);
+            background-color: var(--brand-bg-soft);
+            padding: 12px;
+            border-top: 3px solid var(--brand-primary);
+        }
+        .action-card.highlight {
+            border-top-color: var(--brand-accent);
+            background-color: #fafcf7;
+        }
+        .action-header {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: var(--brand-primary);
+            margin-bottom: 4px;
+        }
+        .action-sub {
+            font-size: 8pt;
+            color: var(--brand-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .action-card p {
+            font-size: 8.5pt;
+            line-height: 1.45;
+            color: #334155;
+            margin: 0;
+        }
+
+        /* 参考信源 */
+        .sources-wrapper {
+            background-color: var(--brand-bg-soft);
+            border: 1px solid var(--brand-border);
+            padding: 12px 16px;
+        }
+        .sources-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+            margin: 0;
+            padding-left: 16px;
+            font-size: 8.5pt;
+            color: var(--brand-secondary);
+        }
+        .sources-grid li {
+            line-height: 1.4;
+        }
+
+        p { margin-top: 0; margin-bottom: 6px; }
+        .last-p { margin-bottom: 0; }
+        [contenteditable="true"]:focus {
+            outline: 2px dashed var(--brand-accent);
+            outline-offset: 3px;
+        }
+
+        /* ===================================================
+           3. 打印时样式锁定（关键！）
+           =================================================== */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                padding: 0;
+                background: none;
+                max-width: 100% !important;
+            }
+            .page {
+                margin: 0;
+                border: none;
+                box-shadow: none;
+                height: 297mm;
+                break-after: page;
+                page-break-after: always;
+            }
+            .page:last-child {
+                break-after: auto;
+                page-break-after: auto;
+            }
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部悬浮操作按钮 -->
+    <div class="floating-toolbar no-print">
+        <button class="btn-action btn-green" onclick="window.print()">🖨️ 导出 / 打印 PDF</button>
+        <button class="btn-action" onclick="toggleEditMode()" id="editToggleBtn">✏️ 开启双击编辑</button>
+    </div>
+
+    <!-- 可编辑主容器（默认开启 contenteditable，在浏览器中即可直接点击打字） -->
+    <div id="editableContainer" contenteditable="true" spellcheck="false">
+
+        <!-- ==========================================
+             PAGE 1：执行摘要、速览矩阵与量化看板
+             ========================================== -->
+        <section class="page">
+            <div class="page-content">
+                
+                <!-- 报头 -->
+                <header class="masthead">
+                    <div class="masthead-overline">STRATEGIC EXECUTIVE BRIEFING | 【报告类别 / 监测特刊】</div>
+                    <h1>【在此输入主报告标题：如 AI科技与商业战略内参】</h1>
+                    <div class="meta">
+                        <span>报告日期：【2026年XX月XX日】</span>
+                        <span>监测周期：【过去 72 小时行业异动】</span>
+                        <span>密级：【高管决策内参 / 商业机密】</span>
+                    </div>
+                </header>
+
+                <!-- 执行摘要（建议 100~150 字） -->
+                <div class="exec-summary">
+                    过去监测周期内，【在此输入宏观背景核心判断】。核心矛盾聚焦于<strong>【重点议题 A】</strong>与<strong>【重点议题 B】</strong>；一方面【简述积极趋势或增长爆发】，另一方面【指出潜在系统性风险或政策监管压力】，为企业中长期战略决策敲响警钟。
+                </div>
+
+                <!-- 10项速览矩阵（两列平衡排布） -->
+                <div class="section-title">晨间要闻速览 | Executive Quick Glance</div>
+                <div class="quick-glance-grid">
+                    <div class="glance-item">
+                        <span class="bullet-num">01.</span> <strong>【要点 01 标签】：</strong>【在此输入第一条动态的精简概述，约 40-50 字左右为佳】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">02.</span> <strong>【要点 02 标签】：</strong>【在此输入第二条动态的精简概述，控制单条文字长度】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">03.</span> <strong>【要点 03 标签】：</strong>【在此输入第三条动态的精简概述，呈现结构化洞察】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">04.</span> <strong>【要点 04 标签】：</strong>【在此输入第四条动态的精简概述，强调核心变化】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">05.</span> <strong>【要点 05 标签】：</strong>【在此输入第五条动态的精简概述，突出关键结论】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">06.</span> <strong>【要点 06 标签】：</strong>【在此输入第六条动态的精简概述，涵盖合规或风险】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">07.</span> <strong>【要点 07 标签】：</strong>【在此输入第七条动态的精简概述，关注商业模式重塑】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">08.</span> <strong>【要点 08 标签】：</strong>【在此输入第八条动态的精简概述，跟踪资本或估值变动】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">09.</span> <strong>【要点 09 标签】：</strong>【在此输入第九条动态的精简概述，体现终端与竞品动作】。
+                    </div>
+                    <div class="glance-item">
+                        <span class="bullet-num">10.</span> <strong>【要点 10 标签】：</strong>【在此输入第十条动态的精简概述，总结生态位重构趋势】。
+                    </div>
+                </div>
+
+                <!-- 核心数据量化看板（利用首页面底黄金空间） -->
+                <div class="metric-banner">
+                    <div class="metric-header">
+                        <span class="metric-label">【核心指标监测项：如 算力单日消耗量突变】</span>
+                        <span class="metric-tag">【状态标签：如 临界点突破】</span>
+                    </div>
+                    <div class="metric-value-row">
+                        <div class="metric-value">180,000,000,000</div>
+                        <div class="metric-unit">【单位：如 次 / Token / 亿元】</div>
+                    </div>
+                    <p class="metric-desc">
+                        【在此输入对上述核心指标突变的定性商业解读：例如说明该数字相比去年同期增长了多少倍，象征着该产业正跨越鸿沟，正式进入怎样的全新发展周期，并标注权威测算来源】。
+                    </p>
+                </div>
+
+            </div>
+            <footer class="page-footer">
+                <span>【页脚报告标头：战略商业情报与决策参考】</span>
+                <span>Page 1 of 3</span>
+            </footer>
+        </section>
+
+        <!-- ==========================================
+             PAGE 2：深度战略剖析（专题 1 & 2）
+             ========================================== -->
+        <section class="page">
+            <div class="page-content">
+                
+                <div class="section-title">深度战略剖析 | In-Depth Strategic Analysis</div>
+
+                <!-- 深度卡片 1 -->
+                <div class="analysis-card">
+                    <div class="analysis-title">
+                        <span>1. 【深度专题一主标题：如 监管风暴与跨国数据合规审查】</span>
+                        <span class="badge">【分类标签：政策与合规】</span>
+                    </div>
+                    <div class="analysis-body">
+                        <div class="analysis-row">
+                            <div class="analysis-col">
+                                <span class="col-label">核心事实 | Core Facts</span>
+                                <p class="last-p">【在此输入发生的客观核心事实，包含主体、关键事件、时间节点与相关方调查行动。建议 100~130 字左右，保持客观中立陈述】。</p>
+                            </div>
+                            <div class="analysis-col">
+                                <span class="col-label">权威解读 | Media Insight</span>
+                                <p class="last-p">【在此输入主流智库、行业权威媒体或券商对该事件的深层归因与机制解读，揭示表面现象之下的行业共性痛点】。</p>
+                            </div>
+                        </div>
+                        <div class="impact-box">
+                            <span class="col-label">商业与决策影响 | Executive Impact</span>
+                            <p>【在此输入对企业管理层、投资决策、采购合规或业务架构的直接冲击与长效启示。<strong>对于特定核心决策岗位（如 CEO/CIO），强调需要采取的防范或应对动作。</strong>】</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 深度卡片 2 -->
+                <div class="analysis-card">
+                    <div class="analysis-title">
+                        <span>2. 【深度专题二主标题：如 商业剪刀差与基建重资产困境】</span>
+                        <span class="badge">【分类标签：商业化研判】</span>
+                    </div>
+                    <div class="analysis-body">
+                        <div class="analysis-row">
+                            <div class="analysis-col">
+                                <span class="col-label">核心事实 | Core Facts</span>
+                                <p class="last-p">【在此输入发生的客观核心事实，着重列举财务收支、资本开支（Capex）、价格降幅与头部厂商的具体经营数据】。</p>
+                            </div>
+                            <div class="analysis-col">
+                                <span class="col-label">权威解读 | Media Insight</span>
+                                <p class="last-p">【在此输入权威机构对供求关系、降价竞争本质与长远盈利模型的专业研判，解释为何会出现这种经营分化】。</p>
+                            </div>
+                        </div>
+                        <div class="impact-box">
+                            <span class="col-label">商业与决策影响 | Executive Impact</span>
+                            <p>【在此输入商业环境转变带来的利弊研判。<strong>指出作为甲方的企业 IT 采购方应如何顺势借力降本增效，以及哪些业务场景迎来最佳重构窗口期。</strong>】</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <footer class="page-footer">
+                <span>【页脚报告标头：战略商业情报与决策参考】</span>
+                <span>Page 2 of 3</span>
+            </footer>
+        </section>
+
+        <!-- ==========================================
+             PAGE 3：深度战略剖析（专题 3）、行动矩阵与信源
+             ========================================== -->
+        <section class="page">
+            <div class="page-content">
+                
+                <div class="section-title">深度战略剖析 (续) | In-Depth Strategic Analysis (Cont.)</div>
+
+                <!-- 深度卡片 3 -->
+                <div class="analysis-card">
+                    <div class="analysis-title">
+                        <span>3. 【深度专题三主标题：如 架构安全众测暴露原生防御盲区】</span>
+                        <span class="badge">【分类标签：系统性安全】</span>
+                    </div>
+                    <div class="analysis-body">
+                        <div class="analysis-row">
+                            <div class="analysis-col">
+                                <span class="col-label">核心事实 | Core Facts</span>
+                                <p class="last-p">【在此输入安全或技术领域的实测数据、监管通报统计、行业漏洞总数及核心受影响范围】。</p>
+                            </div>
+                            <div class="analysis-col">
+                                <span class="col-label">权威解读 | Media Insight</span>
+                                <p class="last-p">【在此输入安全研究专家对新型攻击向量、非确定性风险与工程护栏滞后性的深入技术解析】。</p>
+                            </div>
+                        </div>
+                        <div class="impact-box">
+                            <span class="col-label">商业与决策影响 | Executive Impact</span>
+                            <p>【在此输入该风险事件对企业采购防线、安全验收门槛的直接影响。<strong>指出高管应如何在系统上线前设置阻断层与审计流程。</strong>】</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 战略应对矩阵：按角色分工 -->
+                <div class="section-title">企业高管行动建议 | Executive Action Matrix</div>
+                <div class="action-grid">
+                    <div class="action-card highlight">
+                        <div class="action-header">【架构与技术选型】</div>
+                        <div class="action-sub">【CIO / CTO 优先级】</div>
+                        <p>【在此输入面向技术负责人的落地指引，例如避免单点供应商锁定、搭建多模型路由架构及私有数据检索增强方案】。</p>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-header">【合规与采购穿透】</div>
+                        <div class="action-sub">【法务 / 采购风险防范】</div>
+                        <p>【在此输入面向合规与采购部门的指引，例如针对外部供应商启动数据溯源审计，建立知识产权与数据主权审查机制】。</p>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-header">【安全防御基线】</div>
+                        <div class="action-sub">【CISO 安全负责人】</div>
+                        <p>【在此输入面向安全团队的防御指引，例如增设语义过滤层、在关键交互动作中设立人机协同确认机制防范越权】。</p>
+                    </div>
+                </div>
+
+                <!-- 权威参考信源 -->
+                <div class="section-title">参考信源与监测说明 | Reference Sources</div>
+                <div class="sources-wrapper">
+                    <ul class="sources-grid">
+                        <li>【信源名称 01】：【文章或报告标题】</li>
+                        <li>【信源名称 02】：【文章或报告标题】</li>
+                        <li>【信源名称 03】：【文章或报告标题】</li>
+                        <li>【信源名称 04】：【文章或报告标题】</li>
+                        <li>【信源名称 05】：【文章或报告标题】</li>
+                        <li>【信源名称 06】：【文章或报告标题】</li>
+                        <li>【信源名称 07】：【文章或报告标题】</li>
+                        <li>【信源名称 08】：【文章或报告标题】</li>
+                    </ul>
+                </div>
+
+            </div>
+            <footer class="page-footer">
+                <span>【页脚报告标头：战略商业情报与决策参考】</span>
+                <span>Page 3 of 3</span>
+            </footer>
+        </section>
+
+    </div>
+
+    <!-- 简易交互脚本 -->
+    <script>
+        let isEditable = true;
+        function toggleEditMode() {
+            const container = document.getElementById('editableContainer');
+            const btn = document.getElementById('editToggleBtn');
+            isEditable = !isEditable;
+            container.contentEditable = isEditable;
+            btn.innerHTML = isEditable ? '✏️ 开启双击编辑' : '🔒 已锁定排版';
+            btn.style.backgroundColor = isEditable ? '#0f172a' : '#475569';
+        }
+    </script>
+</body>
+</html>
